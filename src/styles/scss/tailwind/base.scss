@@ -1,0 +1,160 @@
+// base.scss
+
+@import './colors.scss';
+
+// 尺寸单位
+// pc上用px
+// uniapp上我会直接换成rpx，大小乘2，这样就可以直接用设计稿上的参数了。
+$unit: px;
+
+// Layout ===========================
+// overflow----------------------------
+.overflow-hidden {
+  overflow: hidden;
+}
+
+.overflow-auto {
+  overflow: auto;
+}
+.overflow-scroll {
+  overflow: scroll;
+}
+
+// Flexbox & Grid==================================
+
+// flex ---------------------
+.flex {
+  display: flex;
+}
+// Justify Content----------------------
+
+.justify-center {
+  justify-content: center;
+}
+.justify-start {
+  justify-content: start;
+}
+.justify-end {
+  justify-content: end;
+}
+.justify-between {
+  justify-content: space-between;
+}
+// Align Items---------------------------
+
+.items-center {
+  align-items: center;
+}
+
+// Spacing==============================================
+// margin----------------------------------
+// padding--------------------------------------------
+.h-200 {
+  height: 200px;
+}
+$pixels: 400;
+@for $i from 2 through $pixels {
+  // 只生成偶数项，减少生成的代码
+  @if ($i %2 == 0) {
+    $length: $i + $unit;
+    .ml-#{$i } {
+      margin-left: $length;
+    }
+    .mb-#{$i } {
+      margin-bottom: $length;
+    }
+    .mr-#{$i } {
+      margin-right: $length;
+    }
+    .mt-#{$i } {
+      margin-top: $length;
+    }
+
+    .p-#{$i } {
+      padding: $length;
+    }
+    .pl-#{$i } {
+      padding-left: $length;
+    }
+    .pb-#{$i } {
+      padding-bottom: $length;
+    }
+    .px-#{$i } {
+      padding-left: $length;
+      padding-right: $length;
+    }
+    .py-#{$i} {
+      padding-top: $length;
+      padding-bottom: $length;
+    }
+    .h-#{$i} {
+      height: $length;
+    }
+    .w-#{$i} {
+      width: $length;
+    }
+    .space-x-#{$i} > :not([hidden]) ~ :not([hidden]) {
+      --tw-space-x-reverse: 0;
+      margin-right: $length;
+      margin-left: $length;
+    }
+  }
+}
+
+// Typography=====================================================
+// Text Align------------------------------------------------------
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+// font相关
+
+@for $i from 12 through 50 {
+  .text-#{$i} {
+    font-size: $i + $unit;
+  }
+}
+
+.font-bold {
+  font-weight: bold;
+}
+
+@for $i from 1 through 10 {
+  .font-#{$i * 100} {
+    font-weight: $i * 100 + $unit;
+  }
+}
+
+// Interactivity=====================================================================
+// cursor----------------------------------------------------------------------------\
+.cursor-pointer {
+  cursor: pointer;
+}
+
+//Borders===========================================================
+
+// Border width-------------------------
+
+.border-t-1 {
+  border-top: 1rpx solid #eee;
+}
+
+// Sizing========================================================================
+
+// Width-------------------------------------------------------------------------
+.w-full {
+  width: 100%;
+}
+
+// Height-------------------------------------------------------------------------
+.h-full {
+  height: 100%;
+}

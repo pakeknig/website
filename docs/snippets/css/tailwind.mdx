@@ -1,0 +1,32 @@
+---
+sidebar_position: 1
+sidebar_label: 使用 scss 实现 tailwind 的样式
+sidebar_class_name: green
+---
+
+# 使用 scss 实现 tailwind 的样式
+
+想在项目里面使用 tailwind css,但是项目的脚手架太老，官方的安装文档里面都没有对应的文档。我记得是可以安装的，但是需要安装一个兼容版本的，感觉有点麻烦所以就放弃了。  
+还有一个问题，如果在 uniapp 中使用 tailwind，可能会出现有些样式写法在小程序中不兼容的情况，网上没找到什么好用的解决方案，所以不如自己手写。。。  
+还有一个方法是，可以使用 tailwind 的命令行来转换样式，但是一样是因为兼容性问题。比如 tailwind 的`[]`语法，似乎这个符号在有些小程序中，不能使用。另外，每次项目都要开一个
+命令行来 watch 感觉也太麻烦太蠢了。
+
+所以我最后想到了这个用 scss 来手写的方法，也能充分利用 scss 的一些语法，原来也就用一下变量，嵌套还有 mixin 之类的。这次可以用到循环。。。
+有个问题就是这样生成的 css 体积会大一点。生成的改代码会多个几千几万行。结果就是包体积会多几百 kb，甚至几 mb。 而且你每次编译的时候都会慢一点。
+后来我把项目脚手架升级了，直接安装 tailwind，不用 scss 以后，优化了 1mb 多的体积。
+
+所以建议哪些尺寸相关的代码还是按需添加，不要一次性生成很多没有使用的样式，这样体积就会小很多
+
+还有就是代码可以按照 tailwind 官网侧边栏那样组织，因为我目前只是简单使用了一些，所以还没有搞那么规范，后续有新需求的版本，我应该会优化一些结构，把不用的代码移除
+
+import CodeBlock from '@theme/CodeBlock'
+import colorScss from '!!raw-loader!@site/src/styles/scss/tailwind/colors.scss'
+import baseScss from '!!raw-loader!@site/src/styles/scss/tailwind/base.scss'
+
+## taiwind 的调色盘
+
+<CodeBlock language="scss">{colorScss}</CodeBlock>
+
+## 基础样式
+
+<CodeBlock language="scss">{baseScss}</CodeBlock>

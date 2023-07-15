@@ -1,0 +1,65 @@
+---
+nav:
+  title: 命令行工具
+  order: 1
+
+group:
+  title: corepack的使用
+
+toc: content
+tocDepth: 3
+---
+
+# corepack 的使用
+
+corepack 是 node 16.13 版本后推出用于管理包管理器的工具，支持 pnpm 和 yarn
+
+## 开启 corepack
+
+corepack 是一个实验性特性，默认是不开启的.
+执行下面的命令开启
+
+```
+corepack enable
+```
+
+执行下面的命令关闭
+
+```
+corepack disable
+```
+
+单独设置 npm 的开启和关闭
+
+```
+corepack enable npm
+corepack disable npm
+```
+
+## 切换全局包管理器
+
+切换到指定版本
+
+```
+corepack prepare pnpm@<version> --activate
+```
+
+在 node16.17 后，支持 latest 下载最新版本
+
+```
+corepack prepare pnpm@<version> --activate
+```
+
+## package.json 配置
+
+corepack 需要和 package.json 的 "packageManager" 属性配合使用。
+
+packageManager 可以指定项目使用的包管理器版本。
+
+这样使用不符合的包管理器的时候会有报错提示
+
+```
+ "packageManager": "pnpm@8.6.6"
+```
+
+> 需要注意的是，它不能拦截 npm

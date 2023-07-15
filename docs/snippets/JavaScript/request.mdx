@@ -1,0 +1,160 @@
+---
+nav:
+  title: 代码片段
+  order: 1
+
+group:
+  title: request封装
+  order: 2
+
+toc: content
+tocDepth: 3
+---
+
+# request 封装
+
+## axios 封装
+
+封装 axios 的主要作用，我认为体现在团队合作的时候，能够统一代码。  
+其次是在 axios 上包了一层，如果以后不用 axios 了，更容易替换（这是伪需求了，axios 就算不维护了也能撑几年）  
+在 ts 下封装还有一个好处是提供类型提示，但是 axios 本来就是 ts 写的，本身就支持类型提示。
+
+所以，我认为在没有团队合作的情况下，没必要封装 axios。创建一个实例用官方的拦截器就能实现大部分功能了。
+
+因为我觉得拦截器就能实现需求了，所以这个类的封装，也只是简单包一层，加上类型提示而已。对于 axios 的使用几乎没有影响，只是限制只是用 4 种固定的请求。。。
+
+import CodeBlock from '@theme/CodeBlock'
+import Request from '!!raw-loader!@site/src/utils/request/request.ts'
+
+<CodeBlock language="ts">{Request}</CodeBlock>
+
+## uniapp request 封装
+
+uniapp 的 request，是回调函数的形式。 如果不进行封装使用，很容易造成回调地狱。  
+因为 uniapp 支持 promise 和 async await，因为我要同时维护小程序和 pc 端的接口，所以封装成统一的 async 函数比较合适。  
+这样基本上可以从 pc 端的接口粘贴内容到小程序。。。
+
+```ts
+// 封装后端返回值类型
+export type ResponseData<T> = {
+  code: string
+  msg: string
+  data: T
+}
+// 子当以请求参数
+export interface CustomRequestOptions extends Partial<UniApp.RequestOptions> {
+  baseURL?: string
+  responseInterceptors?: (res: any) => any
+}
+export class Request {
+  private baseURL = 'xxx/xxx'
+
+  // 默认配置
+  private baseConfig = {
+    // timeout: 5000,
+    // withCredentials: true,
+  }
+  private baseHeader = {
+    Authorization: 'xxx',
+  }
+  private _config: CustomRequestOptions
+
+  // 覆盖默认配置
+  constructor(config: CustomRequestOptions) {
+    this._config = Object.assign(this.baseConfig, config)
+    if (config.baseURL) {
+      this.baseURL = config.baseURL
+    }
+    if (config.responseInterceptors) {
+      this.responseInterceptors = config.responseInterceptors
+    }
+  }
+
+  // 返回false表示不进行请求
+  private requestInterceptors(config: UniApp.RequestOptions): boolean {
+    return true
+  }
+
+  private responseInterceptors(
+    res: UniApp.RequestSuccessCallbackResult
+  ): unknown {
+    const data = res.data as ResponseData<any>
+    if (data?.code.startsWith('s')) {
+      uni.showToast({
+        title: data.msg,
+      })
+    } else {
+      return null
+    }
+    return res.data
+  }
+  // 定义核心请求
+  public async request(config: UniApp.RequestOptions): Promise<any> {
+    //   拦截器拦截时，不发生请求
+    if (!this.requestInterceptors(config)) {
+      return
+    }
+    return new Promise((resolve, reject) => {
+      uni.request({
+        ...config,
+        url: encodeURI(config.url),
+        header: {
+          ...this.baseHeader,
+          ...config.header,
+        },
+        success: (res) => {
+          const data = this.responseInterceptors(res)
+          if (data) {
+            return resolve(data)
+          }
+        },
+        fail: (res) => {
+          return reject(res)
+        },
+      })
+    })
+  }
+
+  public async get<T = any>(
+    url: string,
+    config?: Omit<UniApp.RequestOptions, 'url'>
+  ): Promise<ResponseData<T>> {
+    return this.request({
+      url: this.baseURL + url,
+      method: 'GET',
+      ...config,
+    })
+  }
+
+  public async post<T = any>(
+    url: string,
+    data?: any,
+    config?: UniApp.RequestOptions
+  ): Promise<ResponseData<T>> {
+    return this.request({
+      url: this.baseURL + url,
+      method: 'POST',
+      data: data,
+      ...config,
+    })
+  }
+}
+
+export default new Request({})
+export const requstOrigin = new Request({
+  baseURL: '',
+  responseInterceptors(res) {
+    const data = res.data as ResponseData<any>
+    if (data?.code.startsWith('s')) {
+      uni.showToast({
+        title: data.msg,
+      })
+    } else {
+      return null
+    }
+    //   这里就不对getUserPermission单独判断了
+    //   config.url.includes('getUserPermission')
+    return res
+  },
+})
+```

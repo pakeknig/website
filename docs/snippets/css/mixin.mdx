@@ -1,0 +1,81 @@
+# 常用 scss mixin 封装
+
+## 节流 css 动画实现
+
+```scss
+@mixin enable-button-throttle() {
+  .ant-btn {
+    animation: throttle 500ms step-end forwards;
+  }
+
+  .ant-btn:active {
+    animation: none;
+  }
+  @keyframes throttle {
+    from {
+      pointer-events: none;
+    }
+    to {
+      pointer-events: all;
+    }
+  }
+}
+@mixin disable-button-throttle() {
+  [class*='ant-btn'] {
+    animation: none !important;
+  }
+}
+```
+
+## 隐藏滚动条
+
+```scss
+// 横向隐藏滚动条，需要设置当前文本不换行
+@mixin hide-scrollbarX() {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  & {
+    white-space: nowrap; //文本不换行
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+}
+
+@mixin hide-scrollbarY() {
+  &::-webkit-scrollbar {
+    display: none; /* Chrome Safari */
+  }
+  & {
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+```
+
+## 处理文本溢出
+
+```scss
+// 单行文本省略  需要确定容器宽度
+@mixin single-line-ellipsis($width) {
+  width: $width;
+  white-space: nowrap; /* 使文本不可换行 */
+  overflow: hidden; /* 隐藏溢出部分 */
+  text-overflow: ellipsis; /* 显示省略符号来代表被隐藏的文本 */
+}
+
+// 多行文本固定省略，需要确定行数和宽度
+@mixin multi-line-ellipsis($width, $lineCount) {
+  width: $width;
+  word-wrap: break-word; /* 内容存在英语或数字时强制换行 */
+  overflow: hidden; /* 隐藏溢出部分 */
+  text-overflow: ellipsis; /* 显示省略符号来代表被隐藏的文本 */
+  display: -webkit-box; /* 将对象作为弹性伸缩盒子模型显示 */
+  -webkit-box-orient: vertical; /* 设置盒子内排列顺序为纵向 */
+  -webkit-line-clamp: $lineCount; /* 限制块元素显示的文本的行数 */
+}
+```
